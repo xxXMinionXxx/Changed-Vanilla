@@ -1,0 +1,35 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="MIT License"
+#issueTrackerURL="https://github.com/LtxProgrammer/Changed-Minecraft-Mod/issues" #optional
+
+[[mods]]
+modId="changedvanilla"
+version="0.1.0"
+displayName="Changed Vanilla"
+updateJSONURL="https://ltxprogrammer.github.io/changed-vanilla.json"
+#displayURL="https://www.curseforge.com/minecraft/mc-mods/changed-minecraft-mod"
+logoFile="icon@400.png"
+credits='''puppetmaster13u'''
+authors="LtxProgrammer"
+description='''Addon mod for Changed containing transfurs for vanilla mobs.'''
+
+[[dependencies.changedvanilla]] #optional
+    modId = "forge"
+    mandatory = true
+    versionRange = "${forge_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+[[dependencies.changedvanilla]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "${minecraft_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.changedvanilla]]
+    modId = "changed"
+    mandatory = true
+    versionRange = "[0.15.0,)"
+    ordering = "NONE"
+    side = "BOTH"
