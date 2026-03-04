@@ -2,6 +2,8 @@ package net.ltxprogrammer.changedvanilla;
 
 import com.mojang.logging.LogUtils;
 import net.ltxprogrammer.changedvanilla.init.ChangedVanillaEntities;
+import net.ltxprogrammer.changedvanilla.init.ChangedVanillaItems;
+import net.ltxprogrammer.changedvanilla.init.ChangedVanillaTabs;
 import net.ltxprogrammer.changedvanilla.init.ChangedVanillaTransfurVariants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -17,7 +19,9 @@ public class ChangedVanilla {
     public ChangedVanilla(FMLJavaModLoadingContext context) {
         final IEventBus modEventBus = context.getModEventBus();
 
+        ChangedVanillaTabs.REGISTRY.register(modEventBus);
         ChangedVanillaEntities.REGISTRY.register(modEventBus);
+        ChangedVanillaItems.REGISTRY.register(modEventBus);
         ChangedVanillaTransfurVariants.REGISTRY.register(modEventBus);
     }
 
