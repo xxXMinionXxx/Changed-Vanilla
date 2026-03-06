@@ -66,23 +66,11 @@ public class LatexGuardianModel extends AdvancedHumanoidModel<LatexGuardian> imp
 
         PartDefinition LeftEar = Head.addOrReplaceChild("LeftEar", CubeListBuilder.create(), PartPose.offset(4.0F, -2.75F, -1.5F));
 
-        PartDefinition LeftEarPivot = LeftEar.addOrReplaceChild("LeftEarPivot", CubeListBuilder.create(), PartPose.offsetAndRotation(-0.25F, 0.0F, 0.0F, 0.3448F, 0.5618F, 0.1548F));
-
-        PartDefinition Head_r1 = LeftEarPivot.addOrReplaceChild("Head_r1", CubeListBuilder.create().texOffs(32, 62).addBox(-0.5F, -1.0F, -1.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, -0.4971F, 0.1719F, 0.3053F));
-
-        PartDefinition Head_r2 = LeftEarPivot.addOrReplaceChild("Head_r2", CubeListBuilder.create().texOffs(22, 61).addBox(-0.5F, -1.0F, 0.25F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, 0.0677F, -0.1172F, 0.3295F));
-
-        PartDefinition Head_r3 = LeftEarPivot.addOrReplaceChild("Head_r3", CubeListBuilder.create().texOffs(44, 60).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, -0.1642F, 0.0594F, 0.3442F));
+        PartDefinition LeftEarPivot = LeftEar.addOrReplaceChild("LeftEarPivot", CubeListBuilder.create().texOffs(8, 59).mirror().addBox(0.0F, -0.5F, -1.0F, 0.0F, 3.0F, 6.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-0.25F, -0.5F, 0.5F, 0.3448F, 0.5618F, 0.1548F));
 
         PartDefinition RightEar = Head.addOrReplaceChild("RightEar", CubeListBuilder.create(), PartPose.offset(-4.0F, -2.75F, -1.5F));
 
-        PartDefinition RightEarPivot = RightEar.addOrReplaceChild("RightEarPivot", CubeListBuilder.create(), PartPose.offsetAndRotation(0.25F, 0.0F, 0.0F, 0.3448F, -0.5618F, -0.1548F));
-
-        PartDefinition Head_r4 = RightEarPivot.addOrReplaceChild("Head_r4", CubeListBuilder.create().texOffs(52, 65).addBox(-0.5F, -1.0F, 0.25F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 0.0F, 0.0F, 0.0677F, 0.1172F, -0.3295F));
-
-        PartDefinition Head_r5 = RightEarPivot.addOrReplaceChild("Head_r5", CubeListBuilder.create().texOffs(42, 65).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 0.0F, 0.0F, -0.1642F, -0.0594F, -0.3442F));
-
-        PartDefinition Head_r6 = RightEarPivot.addOrReplaceChild("Head_r6", CubeListBuilder.create().texOffs(10, 65).addBox(-0.5F, -1.0F, -1.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 0.0F, 0.0F, -0.4971F, -0.1719F, -0.3053F));
+        PartDefinition RightEarPivot = RightEar.addOrReplaceChild("RightEarPivot", CubeListBuilder.create().texOffs(8, 59).addBox(0.0F, -0.5F, -1.0F, 0.0F, 3.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.25F, -0.5F, 0.5F, 0.3448F, -0.5618F, -0.1548F));
 
         PartDefinition Torso = partdefinition.addOrReplaceChild("Torso", CubeListBuilder.create().texOffs(32, 12).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 9.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(24, 46).addBox(0.0F, 0.0F, 2.0F, 0.0F, 11.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, 0.0F));
