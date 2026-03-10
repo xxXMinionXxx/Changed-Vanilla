@@ -3,15 +3,14 @@ package net.ltxprogrammer.changedvanilla.client.render.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.ltxprogrammer.changed.client.animations.Limb;
-import net.ltxprogrammer.changed.client.renderer.animate.AnimatorPresets;
 import net.ltxprogrammer.changed.client.renderer.animate.HumanoidAnimator;
 import net.ltxprogrammer.changed.client.renderer.animate.arm.ArmBobAnimator;
 import net.ltxprogrammer.changed.client.renderer.animate.arm.ArmRideAnimator;
-import net.ltxprogrammer.changed.client.renderer.animate.upperbody.DragonHeadInitAnimator;
 import net.ltxprogrammer.changed.client.renderer.model.AdvancedHumanoidModel;
 import net.ltxprogrammer.changed.client.tfanimations.HelperModel;
 import net.ltxprogrammer.changedvanilla.ChangedVanilla;
 import net.ltxprogrammer.changedvanilla.client.render.animate.ChangedVanillaAnimatorPresets;
+import net.ltxprogrammer.changedvanilla.client.render.animate.leviathan.GhastHeadInitAnimator;
 import net.ltxprogrammer.changedvanilla.entity.LatexGhast;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -79,28 +78,21 @@ public class LatexGhastModel extends AdvancedHumanoidModel<LatexGhast> {
         tentacleBR.add(last(tentacleBR).getChild("BR4"));
 
         /* TODO animations:
-            INIT
-                - idle tentacle writhing x-axis and y-axis
-                - "walking" tilt model forward/backward, tentacles trailing from last position w/ little writhing
             RIDE(AnimateStage::isRiding),
                 - might be impossible for a model that size
             SLEEP(AnimateStage::isSleeping),
                 - might be impossible for a model that size
             CROUCH(AnimateStage::isCrouching),
                 - tilt tentacles up and pull upper body straight down
-            STAND(AnimateStage::isStanding),
-            CREATIVE_FLY(AnimateStage::isCreativeFlying),
             FALL_FLY(AnimateStage::isFallFlying),
                 - tentacles are still and aerodynamic at fast speed -> lerp back to idle writhing at slow speed
-            SWIM(AnimateStage::isSwimming),
-                - propel forwards with tentacles
          */
         animator = HumanoidAnimator.of(this).hipOffset(-1.5f)
-                .addPreset(AnimatorPresets.dragonUpperBody(
+                .addPreset(ChangedVanillaAnimatorPresets.ghastUpperBody(
                         Head, Torso, LeftArm, RightArm))
                 .addPreset(ChangedVanillaAnimatorPresets.ghastTentacles(LeftTentacles, RightTentacles,
                         tentacleFL, tentacleSL, tentacleBL, tentacleFR, tentacleSR, tentacleBR))
-                .addAnimator(new DragonHeadInitAnimator<>(Head))
+                .addAnimator(new GhastHeadInitAnimator<>(Head))
                 .addAnimator(new ArmBobAnimator<>(LeftArm, RightArm))
                 .addAnimator(new ArmRideAnimator<>(LeftArm, RightArm));
     }

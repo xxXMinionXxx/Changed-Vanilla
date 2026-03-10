@@ -25,6 +25,50 @@ public class GhastTentaclesInitAnimator<T extends ChangedEntity, M extends Advan
         return HumanoidAnimator.AnimateStage.INIT;
     }
 
+    protected float traverseFrontTentacle(int index) {
+        return switch (index) {
+            case 0 -> 20.0f;
+            case 1 -> -30.0f;
+            case 2 -> -40.0f;
+            case 3 -> 20.0f;
+            case 4 -> 25.0f;
+            default -> 25.0f;
+        };
+    }
+
+    protected float traverseBackTentacle(int index) {
+        return switch (index) {
+            case 0 -> 30.0f;
+            case 1 -> 10.0f;
+            case 2 -> 10.0f;
+            case 3 -> 20.0f;
+            case 4 -> 20.0f;
+            default -> 20.0f;
+        };
+    }
+
+    protected float traverseSideTentacleX(int index) {
+        return switch (index) {
+            case 0 -> 10.0f;
+            case 1 -> 20.0f;
+            case 2 -> 10.0f;
+            case 3 -> -10.0f;
+            case 4 -> -10.0f;
+            default -> -10.0f;
+        };
+    }
+
+    protected float traverseSideTentacleZ(int index) {
+        return switch (index) {
+            case 0 -> 30.0f;
+            case 1 -> -10.0f;
+            case 2 -> -10.0f;
+            case 3 -> 10.0f;
+            case 4 -> 20.0f;
+            default -> 20.0f;
+        };
+    }
+
     @Override
     public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         leftRoot.y = core.calculateLegPositionY();
@@ -41,15 +85,17 @@ public class GhastTentaclesInitAnimator<T extends ChangedEntity, M extends Advan
         resetTentacle(backLeft);
         resetTentacle(backRight);
 
-        frontLeft.get(0).yRot = Mth.DEG_TO_RAD * 25f;
-        frontRight.get(0).yRot = Mth.DEG_TO_RAD * -25f;
-        backLeft.get(0).yRot = Mth.DEG_TO_RAD * -25f;
-        backRight.get(0).yRot = Mth.DEG_TO_RAD * 25f;
-
         float verticalDrag = entity.getSimulatedSpring(ChangedVanillaSpringTypes.HEAVY_DAMPEN, SpringType.Direction.VERTICAL, this.core.partialTicks) * 30.0f;
         float horizontalDrag = entity.getSimulatedSpring(ChangedVanillaSpringTypes.HEAVY_DAMPEN, SpringType.Direction.FORWARDS, this.core.partialTicks) * 30.0f;
-        float idleScale = 1.0f - Mth.abs(horizontalDrag / 15.0f);
+        boolean invertFrontBack = horizontalDrag < 0.0f;
+        float vertScale = 1.0f - Mth.abs(verticalDrag / 15.0f);
+        float horiScale = 1.0f - Mth.abs(horizontalDrag / 15.0f);
         float rotationalDrag = entity.getTailDragAmount(this.core.partialTicks) * 50.0f;
+
+        if (verticalDrag < 0.0f)
+            verticalDrag *= Mth.lerp(horiScale, 0.75f, 1.5f);
+        else
+            verticalDrag *= 0.75f;
 
         float offsetFL = Mth.sin(ageInTicks * DESYNC_RATE + 0.4f) * Mth.DEG_TO_RAD * 30;
         float offsetSL = Mth.sin(ageInTicks * DESYNC_RATE + 1.2f) * Mth.DEG_TO_RAD * 30;
@@ -71,40 +117,72 @@ public class GhastTentaclesInitAnimator<T extends ChangedEntity, M extends Advan
             float rotationBR = Mth.cos(ageInTicks * SWAY_RATE - (((float)Math.PI / 3.0F) * (offset + offsetBR)));
             offset += SWAY_OFFSET;
 
-            float frontBackSwayScale;
+            float frontSwayScale;
+            float frontTwist;
+            float frontRotationalDrag;
+            float backSwayScale;
+            float backTwist;
+            float backRotationalDrag;
             float leftRightSwayScale;
-            float frontBackSwayCenter;
-            float leftRightSwayCenter;
-            float rotationalDragEffective;
-            float horizontalDragEffective;
+            float frontSwayCenter;
+            float backSwayCenter;
+            float leftRightSwayCenterZ;
+            float leftRightSwayCenterX;
+            float leftRightRotationalDragZ;
+            float leftRightRotationalDragX;
+
             if (i == 0) {
-                frontBackSwayScale = 30.0f;
-                leftRightSwayScale = 30.0f;
-                frontBackSwayCenter = 50.0f;
-                leftRightSwayCenter = 50.0f;
-                rotationalDragEffective = rotationalDrag * 0.25f;
-                horizontalDragEffective = horizontalDrag * 0.25f;
+                frontSwayScale = Mth.lerp(horiScale * vertScale, 5.0f, 30.0f);
+                frontTwist = 25.0f;
+                backSwayScale = Mth.lerp(horiScale * vertScale, 5.0f, 30.0f);
+                backTwist = -25.0f;
+                leftRightSwayScale = Mth.lerp(horiScale * vertScale, 5.0f, 30.0f);
+                frontSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseBackTentacle(0) : this.traverseFrontTentacle(0), 50.0f)
+                        + Mth.lerp(horiScale, verticalDrag * (invertFrontBack ? -1 : 1), -verticalDrag);
+                backSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseFrontTentacle(0) : this.traverseBackTentacle(0), 50.0f)
+                        + Mth.lerp(horiScale, verticalDrag * (invertFrontBack ? 1 : -1), -verticalDrag);
+                leftRightSwayCenterZ = Mth.lerp(horiScale, this.traverseSideTentacleZ(0), 50.0f - verticalDrag);
+                leftRightSwayCenterX = Mth.lerp(horiScale, (this.traverseSideTentacleX(0) - verticalDrag) * (invertFrontBack ? -1 : 1), 0.0f);
+
+                frontRotationalDrag = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? 1 : -1), rotationalDrag) * 0.25f;
+                backRotationalDrag = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? -1 : 1), rotationalDrag) * 0.25f;
+                leftRightRotationalDragZ = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? 1 : -1), 0.0f) * 0.25f;
+                leftRightRotationalDragX = Mth.lerp(horiScale, 0.0f, rotationalDrag) * 0.25f;
             } else {
-                frontBackSwayScale = 40.0f * idleScale;
-                leftRightSwayScale = 40.0f * idleScale;
-                frontBackSwayCenter = (0.0f * idleScale) - verticalDrag;
-                leftRightSwayCenter = (0.0f * idleScale) - verticalDrag;
-                rotationalDragEffective = rotationalDrag;
-                horizontalDragEffective = horizontalDrag;
+                frontSwayScale = Mth.lerp(horiScale * vertScale, 10.0f, 40.0f);
+                frontTwist = Mth.lerp(horiScale, i == 1 ? -25.0f : 0.0f, 0.0f);
+                backSwayScale = Mth.lerp(horiScale * vertScale, 10.0f, 40.0f);
+                backTwist = Mth.lerp(horiScale, i == 1 ? 25.0f : 0.0f, 0.0f);
+                leftRightSwayScale = Mth.lerp(horiScale * vertScale, 5.0f, 40.0f);
+                frontSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseBackTentacle(i) : this.traverseFrontTentacle(i), 0.0f)
+                        + Mth.lerp(horiScale, verticalDrag * (invertFrontBack ? -1 : 1), -verticalDrag);
+                backSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseFrontTentacle(i) : this.traverseBackTentacle(i), 0.0f)
+                        + Mth.lerp(horiScale, verticalDrag * (invertFrontBack ? 1 : -1), -verticalDrag);
+                leftRightSwayCenterZ = Mth.lerp(horiScale, this.traverseSideTentacleZ(i), -verticalDrag);
+                leftRightSwayCenterX = Mth.lerp(horiScale, (this.traverseSideTentacleX(i) - verticalDrag) * (invertFrontBack ? -1 : 1), 0.0f);
+
+                frontRotationalDrag = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? 1 : -1), rotationalDrag);
+                backRotationalDrag = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? -1 : 1), rotationalDrag);
+                leftRightRotationalDragZ = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? 1 : -1), 0.0f);
+                leftRightRotationalDragX = Mth.lerp(horiScale, 0.0f, rotationalDrag);
             }
 
-            frontLeft.get(i).xRot = Mth.DEG_TO_RAD * (-(frontBackSwayScale * rotationFL + frontBackSwayCenter) + horizontalDragEffective);
-            frontLeft.get(i).zRot = Mth.DEG_TO_RAD * rotationalDragEffective;
-            sideLeft.get(i).xRot = Mth.DEG_TO_RAD * (-rotationalDragEffective + horizontalDragEffective * 1.25f);
-            sideLeft.get(i).zRot = Mth.DEG_TO_RAD * (leftRightSwayScale * rotationSL + leftRightSwayCenter);
-            backLeft.get(i).xRot = Mth.DEG_TO_RAD * ((frontBackSwayScale * rotationBL + frontBackSwayCenter) + horizontalDragEffective);
-            backLeft.get(i).zRot = Mth.DEG_TO_RAD * -rotationalDragEffective;
-            backRight.get(i).xRot = Mth.DEG_TO_RAD * ((frontBackSwayScale * rotationBR + frontBackSwayCenter) + horizontalDragEffective);
-            backRight.get(i).zRot = Mth.DEG_TO_RAD * -rotationalDragEffective;
-            sideRight.get(i).xRot = Mth.DEG_TO_RAD * (rotationalDragEffective + horizontalDragEffective * 1.25f);
-            sideRight.get(i).zRot = Mth.DEG_TO_RAD * -(leftRightSwayScale * rotationSR + leftRightSwayCenter);
-            frontRight.get(i).xRot = Mth.DEG_TO_RAD * (-(frontBackSwayScale * rotationFR + frontBackSwayCenter) + horizontalDragEffective);
-            frontRight.get(i).zRot = Mth.DEG_TO_RAD * rotationalDragEffective;
+            frontLeft.get(i).xRot = Mth.DEG_TO_RAD * (-(frontSwayScale * rotationFL + frontSwayCenter));
+            frontLeft.get(i).yRot = Mth.DEG_TO_RAD * frontTwist;
+            frontLeft.get(i).zRot = Mth.DEG_TO_RAD * frontRotationalDrag;
+            sideLeft.get(i).xRot = Mth.DEG_TO_RAD * ((leftRightRotationalDragX) + leftRightSwayCenterX);
+            sideLeft.get(i).zRot = Mth.DEG_TO_RAD * (leftRightSwayScale * rotationSL + leftRightSwayCenterZ + leftRightRotationalDragZ);
+            backLeft.get(i).xRot = Mth.DEG_TO_RAD * ((backSwayScale * rotationBL + backSwayCenter));
+            backLeft.get(i).yRot = Mth.DEG_TO_RAD * backTwist;
+            backLeft.get(i).zRot = Mth.DEG_TO_RAD * -backRotationalDrag;
+            backRight.get(i).xRot = Mth.DEG_TO_RAD * ((backSwayScale * rotationBR + backSwayCenter));
+            backRight.get(i).yRot = Mth.DEG_TO_RAD * -backTwist;
+            backRight.get(i).zRot = Mth.DEG_TO_RAD * -backRotationalDrag;
+            sideRight.get(i).xRot = Mth.DEG_TO_RAD * ((-leftRightRotationalDragX) + leftRightSwayCenterX);
+            sideRight.get(i).zRot = Mth.DEG_TO_RAD * -(leftRightSwayScale * rotationSR + leftRightSwayCenterZ - leftRightRotationalDragZ);
+            frontRight.get(i).xRot = Mth.DEG_TO_RAD * (-(frontSwayScale * rotationFR + frontSwayCenter));
+            frontRight.get(i).yRot = Mth.DEG_TO_RAD * -frontTwist;
+            frontRight.get(i).zRot = Mth.DEG_TO_RAD * frontRotationalDrag;
         }
     }
 }
