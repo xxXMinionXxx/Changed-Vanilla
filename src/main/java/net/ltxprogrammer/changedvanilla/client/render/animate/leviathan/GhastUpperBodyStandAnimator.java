@@ -7,13 +7,13 @@ import net.ltxprogrammer.changed.entity.ChangedEntity;
 import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
-public class GhastUpperBodyCrouchAnimator<T extends ChangedEntity, M extends AdvancedHumanoidModel<T>> extends AbstractUpperBodyAnimator<T, M> {
-    public GhastUpperBodyCrouchAnimator(ModelPart head, ModelPart torso, ModelPart leftArm, ModelPart rightArm) {
+public class GhastUpperBodyStandAnimator<T extends ChangedEntity, M extends AdvancedHumanoidModel<T>> extends AbstractUpperBodyAnimator<T, M> {
+    public GhastUpperBodyStandAnimator(ModelPart head, ModelPart torso, ModelPart leftArm, ModelPart rightArm) {
         super(head, torso, leftArm, rightArm);
     }
 
     public HumanoidAnimator.AnimateStage preferredStage() {
-        return HumanoidAnimator.AnimateStage.CROUCH;
+        return HumanoidAnimator.AnimateStage.STAND;
     }
 
     public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
@@ -22,7 +22,7 @@ public class GhastUpperBodyCrouchAnimator<T extends ChangedEntity, M extends Adv
         this.leftArm.z = this.torso.z;
         this.rightArm.z = this.torso.z;
         this.torso.xRot = 0.0F;
-        this.torso.y = 3.2f + this.core.calculateTorsoPositionY();
+        this.torso.y = this.core.calculateTorsoPositionY();
         this.head.y = this.torso.y;
         this.leftArm.y = this.torso.y + 2.0F;
         this.rightArm.y = this.torso.y + 2.0F;

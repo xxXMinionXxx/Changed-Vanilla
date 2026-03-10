@@ -1,6 +1,7 @@
 package net.ltxprogrammer.changedvanilla.entity;
 
 import net.ltxprogrammer.changed.entity.ChangedEntity;
+import net.ltxprogrammer.changed.entity.SeatEntity;
 import net.ltxprogrammer.changed.entity.TransfurCause;
 import net.ltxprogrammer.changed.entity.TransfurMode;
 import net.ltxprogrammer.changed.entity.variant.EntityShape;
@@ -39,7 +40,7 @@ public class LatexGhast extends ChangedEntity {
     protected void setAttributes(AttributeMap attributes) {
         super.setAttributes(attributes);
         attributes.getInstance(ForgeMod.ENTITY_GRAVITY.get()).setBaseValue(0.0);
-        attributes.getInstance(ForgeMod.SWIM_SPEED.get()).setBaseValue(1.6);
+        attributes.getInstance(ForgeMod.SWIM_SPEED.get()).setBaseValue(2.2);
         attributes.getInstance(ForgeMod.BLOCK_REACH.get()).setBaseValue(7.0);
         attributes.getInstance(ForgeMod.ENTITY_REACH.get()).setBaseValue(4.5);
     }
@@ -100,6 +101,8 @@ public class LatexGhast extends ChangedEntity {
     public WantedVerticalMovement getWantedVerticalMovement(LivingEntity applyEntity) {
         if (applyEntity.hasPose(Pose.SWIMMING))
             return WantedVerticalMovement.IDLE;
+        if (applyEntity.isFallFlying())
+            return WantedVerticalMovement.SINK_DOWN;
         if (applyEntity instanceof Player player && player.hasContainerOpen())
             return WantedVerticalMovement.IDLE;
         if (applyEntity.isSleeping())
@@ -154,6 +157,9 @@ public class LatexGhast extends ChangedEntity {
         super.variantTick(level);
 
         var applyEntity = maybeGetUnderlying();
+        if (!(applyEntity.getVehicle() instanceof SeatEntity seat) || (seat.canSeatedDismount())) {
+            applyEntity.stopRiding();
+        }
 
         if (applyEntity.isSprinting())
             this.setFluidTypeHeight(ForgeMod.EMPTY_TYPE.get(), 1.0);
@@ -177,6 +183,17 @@ public class LatexGhast extends ChangedEntity {
             }
         }
 
-        applyEntity.setDeltaMovement(applyEntity.getDeltaMovement().multiply(1.0, 0.92, 1.0));
+        double terminalVelocity = applyEntity.isFallFlying() ? 0.98 : 0.92;
+
+        applyEntity.setDeltaMovement(applyEntity.getDeltaMovement().multiply(1.0, terminalVelocity, 1.0));
+    }
+
+    @Override
+    public float getFlyingSpeed() {
+        if (this.getUnderlyingPlayer() != null && this.getUnderlyingPlayer().getAbilities().flying && !this.getUnderlyingPlayer().isPassenger()) {
+            return this.isSprinting() ? this.getUnderlyingPlayer().getAbilities().getFlyingSpeed() * 2.0F : this.getUnderlyingPlayer().getAbilities().getFlyingSpeed();
+        } else {
+            return 0.03F;
+        }
     }
 }

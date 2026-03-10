@@ -77,16 +77,6 @@ public class LatexGhastModel extends AdvancedHumanoidModel<LatexGhast> {
         tentacleBR.add(last(tentacleBR).getChild("BR3"));
         tentacleBR.add(last(tentacleBR).getChild("BR4"));
 
-        /* TODO animations:
-            RIDE(AnimateStage::isRiding),
-                - might be impossible for a model that size
-            SLEEP(AnimateStage::isSleeping),
-                - might be impossible for a model that size
-            CROUCH(AnimateStage::isCrouching),
-                - tilt tentacles up and pull upper body straight down
-            FALL_FLY(AnimateStage::isFallFlying),
-                - tentacles are still and aerodynamic at fast speed -> lerp back to idle writhing at slow speed
-         */
         animator = HumanoidAnimator.of(this).hipOffset(-1.5f)
                 .addPreset(ChangedVanillaAnimatorPresets.ghastUpperBody(
                         Head, Torso, LeftArm, RightArm))

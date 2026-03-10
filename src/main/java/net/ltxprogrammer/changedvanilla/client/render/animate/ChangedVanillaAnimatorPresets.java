@@ -17,7 +17,7 @@ public class ChangedVanillaAnimatorPresets {
                 .addAnimator(new GhastUpperBodyInitAnimator<>(head, torso, leftArm, rightArm))
                 .addAnimator(new GhastUpperBodyCrouchAnimator<>(head, torso, leftArm, rightArm))
                 .addAnimator(new DragonUpperBodyAttackAnimator<>(head, torso, leftArm, rightArm))
-                .addAnimator(new DragonUpperBodyStandAnimator<>(head, torso, leftArm, rightArm));
+                .addAnimator(new GhastUpperBodyStandAnimator<>(head, torso, leftArm, rightArm));
     }
 
     public static <T extends ChangedEntity, M extends AdvancedHumanoidModel<T>> Consumer<HumanoidAnimator<T, M>> ghastTentacles(ModelPart leftRoot, ModelPart rightRoot,
@@ -25,6 +25,10 @@ public class ChangedVanillaAnimatorPresets {
                                                                                                                                 List<ModelPart> frontRight, List<ModelPart> sideRight, List<ModelPart> backRight) {
         return animator -> {
             animator.addAnimator(new GhastTentaclesInitAnimator<>(leftRoot, rightRoot, frontLeft, sideLeft, backLeft, frontRight, sideRight, backRight))
+                    .addAnimator(new GhastTentaclesSleepAnimator<>(leftRoot, rightRoot, frontLeft, sideLeft, backLeft, frontRight, sideRight, backRight))
+                    .addAnimator(new GhastTentaclesStandAnimator<>(leftRoot, rightRoot, frontLeft, sideLeft, backLeft, frontRight, sideRight, backRight))
+                    .addAnimator(new GhastTentaclesCrouchAnimator<>(leftRoot, rightRoot, frontLeft, sideLeft, backLeft, frontRight, sideRight, backRight))
+                    .addAnimator(new GhastTentaclesFallFlyAnimator<>(leftRoot, rightRoot, frontLeft, sideLeft, backLeft, frontRight, sideRight, backRight))
                     .addAnimator(new GhastTentaclesSwimAnimator<>(leftRoot, rightRoot, frontLeft, sideLeft, backLeft, frontRight, sideRight, backRight));
         };
     }

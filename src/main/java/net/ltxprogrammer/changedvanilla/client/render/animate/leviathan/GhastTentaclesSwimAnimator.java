@@ -52,15 +52,6 @@ public class GhastTentaclesSwimAnimator<T extends ChangedEntity, M extends Advan
             float rotationBR = Mth.cos(limbSwing * SWIM_RATE - (((float)Math.PI / 3.0F) * (offset + offsetBR)));
             offset += SWAY_OFFSET;
 
-            /*if (rotation1 > 0.0f)
-                rotation1 *= 0.5f;
-            if (rotation2 > 0.0f)
-                rotation2 *= 0.5f;
-            if (rotation3 > 0.0f)
-                rotation3 *= 0.5f;
-            if (rotation4 > 0.0f)
-                rotation4 *= 0.5f;*/
-
             float frontBackSwayScale;
             float leftRightSwayScale;
             float frontBackSwayOffset;

@@ -71,13 +71,6 @@ public class GhastTentaclesInitAnimator<T extends ChangedEntity, M extends Advan
 
     @Override
     public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        leftRoot.y = core.calculateLegPositionY();
-        leftRoot.xRot = 0f;
-        leftRoot.zRot = 0f;
-        rightRoot.y = leftRoot.y;
-        rightRoot.xRot = 0f;
-        rightRoot.zRot = 0f;
-
         resetTentacle(frontLeft); // x:[20 -> 80] y:[0 -> 50] z:[0 -> 30]
         resetTentacle(frontRight);
         resetTentacle(sideLeft); // x:[20 -> -20] z:[20 -> 80] y:[-45 -> 45]
@@ -98,11 +91,11 @@ public class GhastTentaclesInitAnimator<T extends ChangedEntity, M extends Advan
             verticalDrag *= 0.75f;
 
         float offsetFL = Mth.sin(ageInTicks * DESYNC_RATE + 0.4f) * Mth.DEG_TO_RAD * 30;
-        float offsetSL = Mth.sin(ageInTicks * DESYNC_RATE + 1.2f) * Mth.DEG_TO_RAD * 30;
+        float offsetSL = Mth.sin(ageInTicks * DESYNC_RATE + 1.2f) * Mth.DEG_TO_RAD * 30 + ((float)Math.PI * 0.5f);
         float offsetBL = Mth.sin(ageInTicks * DESYNC_RATE + 2.0f) * Mth.DEG_TO_RAD * 30;
-        float offsetFR = Mth.sin(ageInTicks * DESYNC_RATE + 2.4f) * Mth.DEG_TO_RAD * 30;
+        float offsetFR = Mth.sin(ageInTicks * DESYNC_RATE + 2.4f) * Mth.DEG_TO_RAD * 30 + ((float)Math.PI * 0.5f);
         float offsetSR = Mth.sin(ageInTicks * DESYNC_RATE + 0.8f) * Mth.DEG_TO_RAD * 30;
-        float offsetBR = Mth.sin(ageInTicks * DESYNC_RATE + 0.0f) * Mth.DEG_TO_RAD * 30;
+        float offsetBR = Mth.sin(ageInTicks * DESYNC_RATE + 0.0f) * Mth.DEG_TO_RAD * 30 + ((float)Math.PI * 0.5f);
 
         float offset = 0.0F;
         for (int i = 0; i < frontLeft.size(); ++i) {
@@ -137,11 +130,11 @@ public class GhastTentaclesInitAnimator<T extends ChangedEntity, M extends Advan
                 backSwayScale = Mth.lerp(horiScale * vertScale, 5.0f, 30.0f);
                 backTwist = -25.0f;
                 leftRightSwayScale = Mth.lerp(horiScale * vertScale, 5.0f, 30.0f);
-                frontSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseBackTentacle(0) : this.traverseFrontTentacle(0), 50.0f)
+                frontSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseBackTentacle(0) : this.traverseFrontTentacle(0), 50.0f + (core.crouching ? 10.0f : 0.0f))
                         + Mth.lerp(horiScale, verticalDrag * (invertFrontBack ? -1 : 1), -verticalDrag);
-                backSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseFrontTentacle(0) : this.traverseBackTentacle(0), 50.0f)
+                backSwayCenter = Mth.lerp(horiScale, invertFrontBack ? this.traverseFrontTentacle(0) : this.traverseBackTentacle(0), 50.0f + (core.crouching ? 10.0f : 0.0f))
                         + Mth.lerp(horiScale, verticalDrag * (invertFrontBack ? 1 : -1), -verticalDrag);
-                leftRightSwayCenterZ = Mth.lerp(horiScale, this.traverseSideTentacleZ(0), 50.0f - verticalDrag);
+                leftRightSwayCenterZ = Mth.lerp(horiScale, this.traverseSideTentacleZ(0), 50.0f - verticalDrag + (core.crouching ? 10.0f : 0.0f));
                 leftRightSwayCenterX = Mth.lerp(horiScale, (this.traverseSideTentacleX(0) - verticalDrag) * (invertFrontBack ? -1 : 1), 0.0f);
 
                 frontRotationalDrag = Mth.lerp(horiScale, rotationalDrag * (invertFrontBack ? 1 : -1), rotationalDrag) * 0.25f;
